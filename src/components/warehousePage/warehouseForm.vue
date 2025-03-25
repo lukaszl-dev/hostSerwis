@@ -1,0 +1,153 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { useField, useForm } from 'vee-validate'
+import { useRouter, useRoute } from 'vue-router'
+
+// Walidacja
+const { handleSubmit } = useForm({
+    validationSchema: {
+        nprzedmiotu() {
+            if (nazwaPrzedmiotu.value?.length >= 3) return true
+
+            return 'Nazwa przedmiotu nie może być krótsza od 3 znaków'
+        },
+        opis() {
+            if (opisPrzedmiotu.value?.length >= 10) return true
+
+            return 'Opis przedmiotu nie może być krótszy od 10 znaków'
+        },
+        fprzedmiotu() {
+            if (firmaPrzedmiotu.value?.length >= 3) return true
+
+            return 'Firma przedmiotu nie może być krótsza od 3 znaków'
+        },
+        pracownik() {
+            if (zaznaczonyPracownik.value) return true
+
+            return 'Wybierz pracownika'
+        },
+        checkbox(value) {
+            if (value === '1') return true
+
+            return 'Musisz potwierdzić zgodność!'
+        },
+    },
+})
+const nprzedmiotu = useField('nprzedmiotu')
+const opis = useField('opis')
+const fprzedmiotu = useField('fprzedmiotu')
+const pracownik = useField('pracownik')
+const checkbox = useField('checkbox')
+
+// Router/Routing [odebranie parametru id z linka i końcowe przekierowanie na stronę]
+const route = useRoute();
+const router = useRouter();
+const id = route.params.id || -1;
+// v-model [ustawienie wartości domyślnych dla zmiennych ktore oblusguja formularz]
+const zaznaczonyPracownik = ref(null);
+const nazwaPrzedmiotu = ref(null);
+const firmaPrzedmiotu = ref(null);
+const opisPrzedmiotu = ref(null);
+const employees = ref([]);
+// snackbar [pasek informacyjny pojawiajacy sie po wywaleniu sie bledu]
+let snackbar = ref(false);
+let snackbarMessage = ref('');
+
+// funkcja pobierająca pracowników do listy a przy okazji dane do formularza
+const fetchData = async () => {
+    try {
+        const response = await axios.get(`http://localhost:3000/api/getwarehousFormData?id=${id}`);
+        if (response) {
+            employees.value = response.data.employees;
+            // console.log(response.data.nazwa)
+            zaznaczonyPracownik.value = response.data.owner;
+            nazwaPrzedmiotu.value = response.data.nazwa;
+            firmaPrzedmiotu.value = response.data.firma;
+            opisPrzedmiotu.value = response.data.opis;
+        }
+
+
+    } catch (error) {
+        console.error("Błąd pobierania danych:", error);
+    }
+};
+
+// wywołanie przy każdym załadowaniu komponentu
+onMounted(fetchData);
+
+// funkcja wysyłająca rządanie o update
+const updateItem = async () => {
+    try {
+        const response = await axios.post('http://localhost:3000/api/updateItem', {
+            id: id,
+            nprzedmiotu: nazwaPrzedmiotu.value,
+            opis: opisPrzedmiotu.value,
+            fprzedmiotu: firmaPrzedmiotu.value,
+            pracownik: zaznaczonyPracownik.value
+        });
+        if (response.status == 201) {
+            snackbarMessage.value = "Zaktualizowano dane!"; 
+            snackbar.value = true;
+            router.push({ name: 'Warehouse' });
+        } else {
+            snackbarMessage.value = "Wystąpił błąd!"; 
+            snackbar.value = true; 
+        }
+    } catch (error) {
+        snackbarMessage.value = "Wystąpił błąd!"; 
+        snackbar.value = true; 
+        console.error('Błąd updatu VUE:', error);
+    }
+}
+
+// click-handler do buttona
+const submit = handleSubmit(() => {
+    updateItem();
+})
+
+
+</script>
+<template>
+    <v-snackbar v-model="snackbar" timeout="3000">
+        {{ snackbarMessage }} 
+        <template v-slot:actions>
+            <v-btn text class="text-white" @click="snackbar = false">X</v-btn> 
+        </template>
+    </v-snackbar>
+    <v-container class="fill-height d-flex align-center justify-center">
+        <v-responsive class="d-flex align-center justify-center form-container">
+            <form @submit.prevent="submit">
+                <v-text-field v-model="nazwaPrzedmiotu" :counter="100" :error-messages="nprzedmiotu.errorMessage.value"
+                    label="Nazwa przedmiotu"></v-text-field>
+
+                <v-text-field v-model="firmaPrzedmiotu" :counter="50" :error-messages="fprzedmiotu.errorMessage.value"
+                    label="Firma przedmiotu"></v-text-field>
+
+                <v-textarea v-model="opisPrzedmiotu" :counter="250" :error-messages="opis.errorMessage.value"
+                    label="Opis przedmiotu"></v-textarea>
+
+                <v-select v-model="zaznaczonyPracownik" :items="employees" label="Wybierz pracownika"
+                    :error-messages="pracownik.errorMessage.value" :menu-props="{ maxHeight: '400' }"></v-select>
+
+                <v-checkbox v-model="checkbox.value.value" :error-messages="checkbox.errorMessage.value"
+                    label="Potwierdzam zgodność danych ze stanem faktycznym" type="checkbox" value="1"></v-checkbox>
+
+                <v-btn class="me-4" type="submit">
+                    Zatwierdź
+                </v-btn>
+
+            </form>
+        </v-responsive>
+    </v-container>
+</template>
+<style scoped>
+.form-container {
+    width: 60%;
+    height: auto;
+}
+.v-btn:hover {
+    color: #fff;
+    background-color: #32dc9e;
+}
+</style>

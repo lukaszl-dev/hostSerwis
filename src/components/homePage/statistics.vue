@@ -1,0 +1,128 @@
+<template>
+    <section class="d-flex justify-center flex-column flex-md-row align-center ga-14 mt-15">
+        <div class="skew"></div>
+        <div class="skew2"></div>
+        <v-card v-for="item in items" :key="item.id" class="custom-card" tile>
+            <img class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
+            <div class="card-content">
+                <p class="count">{{ item.count }}</p>
+                <p class="text-body-1">{{ item.description }}</p>
+            </div>
+        </v-card>
+    </section>
+</template>
+<script>
+export default {
+    name: "timeLine",
+    data() {
+        return {
+            items: [
+                {
+                    id: 1,
+                    imgSrc: require('@/assets/homePage/sprzetnastanie.png'),
+                    imgAlt: "Sprzęt na stanie",
+                    count: 0,
+                    description: "Sprzęt na stanie"
+                },
+                {
+                    id: 2,
+                    imgSrc: require('@/assets/homePage/sprzetwuzyciu.png'),
+                    imgAlt: "Sprzęt w użyciu",
+                    count: 0,
+                    description: "Sprzęt w użyciu"
+                },
+                {
+                    id: 3,
+                    imgSrc: require('@/assets/homePage/wpisanychpracownikow.png'),
+                    imgAlt: "Wpisanych pracowników",
+                    count: 0,
+                    description: "Wpisanych pracowników"
+                },
+            ]
+        }
+    }
+}
+</script>
+<style scoped>
+.img__stats {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.custom-card {
+    max-width: 350px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s ease-in-out;
+}
+
+.custom-card:hover {
+    transform: scale(120%);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.count {
+    font-size: 32px;
+    font-weight: bold;
+    color: #9edbc5;
+    margin-bottom: 10px;
+}
+
+.text-body-1 {
+    font-size: 16px;
+    color: #757575;
+    font-weight: 500;
+}
+
+.skew {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: -150px;
+    background-color: rgb(50, 220, 158);
+    width: 100%;
+    max-width: 300px;
+    transform: skew(30deg);
+    height: 100dvh;
+}
+
+.skew2 {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: -150px;
+    background-color: rgb(50, 220, 158);
+    width: 100%;
+    max-width: 300px;
+    transform: skew(-30deg);
+    height: 100dvh;
+}
+
+
+@media (max-width: 1280px) {
+    .skew,
+    .skew2 {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .img__stats {
+        max-width: 200px;
+    }
+}
+</style>
