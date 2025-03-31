@@ -1,9 +1,9 @@
 <template>
     <v-timeline side="end" class="mt-8">
-        <v-timeline-item v-for="item in items" :key="item.id" dot-color="teal-lighten-2" size="small">
+        <v-timeline-item v-for="item in items" :key="item.id" dot-color="var(--primary-blue)" size="small">
             <v-container class="timeline__container d-flex justify-center align-center mr-12 ml-16">
-                <img :src=item.image :alt="item.alt">
-                <div class="timeline-text-box ml-md-16 text-white">
+                <img loading="lazy" :src=item.image :alt="item.alt">
+                <div class="timeline-text-box ml-md-16">
                     <h3 class="text-h4 text-uppercase">{{ item.title }}</h3>
                     <p class="text-h6 pt-5">
                         {{ item.description }}
@@ -57,7 +57,7 @@ export default {
 
 .timeline__container {
     max-width: 80%;
-    background-color: rgb(50, 220, 158);
+    background-color: var(--primary-yellow);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -67,6 +67,7 @@ export default {
 }
 
 .timeline-text-box {
+    color: var(--primary-blue);
     width: 70%;
     padding: 10px;
 }

@@ -10,7 +10,7 @@ export default {
                 { title: 'Właściciel', key: 'owner', align: 'end' },
                 { title: 'Opis urządzenia', key: 'opis', align: 'end' },
                 { title: 'Firma urządzenia', key: 'firma', align: 'end' },
-                { title: 'Rodzaj urządzenia', key: 'rodzaj', align: 'end' },
+                { title: 'Kategoria', key: 'rodzaj', align: 'end' },
                 { title: 'Akcje', key: 'actions', align: 'center', sortable: false }
             ],
             search: '',
@@ -19,21 +19,28 @@ export default {
             totalItems: 0,
             snackbar: false,
             snackbarMessage: '',
+            confirmDialog: false,
+            itemToDelete: null,
+            employee: this.$route.params.id || -1
         };
     },
     methods: {
-        loadItems(options) {
+        async loadItems(options) {
             this.loading = true;
             this.currentPage = options.page;
             this.itemsPerPage = options.itemsPerPage;
 
-            fetch(`http://localhost:3000/api/getEquipment?page=${this.currentPage}&itemsPerPage=${this.itemsPerPage}`)
-                .then(res => {
-                    if (!res.ok) throw new Error("Błąd pobierania danych", res);
-                    return res.json();
-                })
-                .then(response => {
-                    this.serverItems = response.items.map(item => ({
+            try {
+                const response = await axios.get('http://localhost:3000/api/getEquipment', {
+                    params: {
+                        page: this.currentPage,
+                        itemsPerPage: this.itemsPerPage,
+                        employee: this.employee
+                    }
+                });
+
+                if (response && response.data) {
+                    this.serverItems = response.data.items.map(item => ({
                         id: item.id_przedmiotu,
                         nazwasprzetu: item.nazwa_przedmiotu,
                         owner: item.daneW,
@@ -41,30 +48,53 @@ export default {
                         rodzaj: item.rodzaj_przedmiotu,
                         opis: item.opis_przedmiotu,
                     }));
-                    this.totalItems = response.total;
-                    this.loading = false;
-                })
-                .catch(error => {
-                    console.error("Błąd pobierania danych:", error);
-                    this.loading = false;
-                });
+                    this.totalItems = response.data.total;
+                }
+            } catch (error) {
+                console.error("Błąd pobierania danych:", error);
+                this.$router.push({ name: "Warehouse" });
+                this.employee = -1;
+                this.loadItems({ page: 1, itemsPerPage: 10 });
+
+            } finally {
+                this.loading = false;
+            }
         },
         editItem(item) {
-            this.$router.push({name: "WarehouseForm", params:{id: item.id}});
-            console.log('Edytuj', item);
+            this.$router.push({ name: "WarehouseForm", params: { id: item.id } });
+            // console.log('Edytuj', item);
         },
-        async removeItem(item) {
+        askToRemoveItem(item) {
+            this.itemToDelete = item;
+            this.confirmDialog = true;
+        },
+        async removeItem() {
+            if (!this.itemToDelete) return;
             try {
-                const response = await axios.post(`http://localhost:3000/api/removeItem?id=${item.id}`);
+                const response = await axios.post(`http://localhost:3000/api/removeItem?id=${this.itemToDelete.id}`);
                 if (response) {
-                    this.snackbarMessage = `Przedmiot ${item.nazwasprzetu} został usunięty.`;
+                    this.snackbarMessage = `Przedmiot ${this.itemToDelete.nazwasprzetu} został usunięty.`;
                     this.snackbar = true;
                     this.loadItems({ page: this.currentPage, itemsPerPage: this.itemsPerPage });
                 }
             } catch (error) {
                 console.error('Błąd przy usuwaniu:', error);
             }
+            this.confirmDialog = false;
+            this.itemToDelete = null;
         },
+        addCategory() {
+            this.$router.push({ name: "WarehouseFormCategory" });
+        },
+        addEquipment() {
+            this.$router.push({ name: "WarehouseFormAdd" });
+        },
+        EmployeeModule(){
+            this.$router.push({ name: "WarehouseEmployeesPage" });
+        },
+        QRModule(id){
+            this.$router.push({ name: "WarehouseQRModule", params: {id: id} });
+        },      
     },
     mounted() {
         this.loadItems({ page: this.currentPage, itemsPerPage: this.itemsPerPage });
@@ -74,25 +104,55 @@ export default {
 </script>
 
 <template>
-    <v-snackbar v-model="snackbar" timeout="3000">
-        {{ snackbarMessage }}
-        <template v-slot:actions>
-            <v-btn text class="text-white" @click="snackbar = false">X</v-btn>
-        </template>
-    </v-snackbar>
-    <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="serverItems"
-        :items-length="totalItems" :loading="loading" :search="search" item-value="rodzaj" @update:options="loadItems" itemsPerPageText="Elementów na stronę:" itemPerPageAllText="Wszystkie">
-        <template v-slot:[`item.actions`]="{ item }">
-
-            <v-btn class="ma-5 text-body-1 edit" @click="editItem(item)">
-                <v-icon icon="mdi-pencil mr-2" /> Edytuj
+    <div>
+        <v-snackbar v-model="snackbar" timeout="3000">
+            {{ snackbarMessage }}
+            <template v-slot:actions>
+                <v-btn text class="text-white" @click="snackbar = false">X</v-btn>
+            </template>
+        </v-snackbar>
+        <v-dialog v-model="this.confirmDialog" max-width="400">
+            <v-card>
+                <v-card-title class="text-h6">
+                    Czy na pewno chcesz usunąć sprzęt: <br> {{ this.itemToDelete?.nazwasprzetu }}?
+                </v-card-title>
+                <v-card-actions class="d-flex justify-end">
+                    <v-btn color="red" text @click="confirmDialog = false">Nie</v-btn>
+                    <v-btn color="green" text @click="removeItem">Tak</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-responsive>
+            <v-btn class="ma-4 text-h6 btn-Add" @click="addEquipment()">
+                <v-icon icon="mdi-plus mr-2" /> Dodaj sprzęt
             </v-btn>
-
-            <v-btn class="ma-5 text-body-1 drop" @click="removeItem(item)">
-                <v-icon icon="mdi-delete mr-2" /> Usuń
+            <v-btn class="ma-4 text-h6 btn-Add" @click="addCategory()">
+                <v-icon icon="mdi-plus mr-2" /> Zarządzaj Kategoriami
             </v-btn>
-        </template>
-    </v-data-table-server>
+            <v-btn class="ma-4 text-h6 btn-Add" @click="EmployeeModule()">
+                <v-icon icon="mdi-account-group mr-2" /> Zarządzaj Pracownikami
+            </v-btn>
+        </v-responsive>
+
+        <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="serverItems"
+            :items-length="totalItems" :loading="loading" :search="search" item-value="rodzaj"
+            @update:options="loadItems" itemsPerPageText="Elementów na stronę:" itemPerPageAllText="Wszystkie">
+            <template v-slot:[`item.actions`]="{ item }">
+
+                <v-btn class="ma-5 text-body-1 edit" @click="editItem(item)">
+                    <v-icon icon="mdi-pencil mr-2" /> Edytuj
+                </v-btn>
+
+                <v-btn class="ma-5 text-body-1 edit" @click="QRModule(item.id)">
+                    <v-icon icon="mdi-qrcode mr-2" /> Kod Kreskowy
+                </v-btn>
+
+                <v-btn class="ma-5 text-body-1 drop" @click="askToRemoveItem(item)">
+                    <v-icon icon="mdi-delete mr-2" /> Usuń
+                </v-btn>
+            </template>
+        </v-data-table-server>
+    </div>
 </template>
 
 
@@ -107,11 +167,27 @@ export default {
 }
 
 .edit:hover {
-    color: #32dc9e;
-    background-color: #f0f0f0;
+    color: var(--primary-blue);
+    background-color: var(--primary-yellow);
 }
 
 .alert__notify {
-    background-color: #32dc9e;
+    background-color: var(--primary-yellow);
+}
+
+.btn-Add {
+    width: 100%;
+    max-width: 275px;
+    height: auto;
+    min-height: 50px;
+    border-radius: 12px;
+    box-shadow: 4px 4px 6px 6px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease-in-out;
+    text-align: center;
+}
+
+.btn-Add:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-yellow);
 }
 </style>

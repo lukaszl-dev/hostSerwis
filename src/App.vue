@@ -4,14 +4,14 @@
     <v-main>
       <router-view />
     </v-main>
-    <scroll :scrollY="scrollY"/>
-    <footerComp/>
+    <scroll :scrollY="scrollY" />
+    <footerComp />
   </v-app>
 </template>
 
 <script>
 import nagivation_bar from "./components/base/navigationBar.vue";
-import footerComp  from "./components/base/footerComp.vue";
+import footerComp from "./components/base/footerComp.vue";
 import scroll from "./components/base/ScrollToTop.vue";
 export default {
   name: "App",
@@ -40,15 +40,22 @@ export default {
 </script>
 
 <style>
-  html {
-    scroll-behavior: smooth;
-  }
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    margin-top: 60px;
-  }
+:root {
+  --primary-yellow: #ffcd03;
+  --primary-yellowAlpha: rgba(255, 205, 3,0.7);
+  --primary-blue: #284f75;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
 </style>

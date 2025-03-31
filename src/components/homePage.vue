@@ -3,8 +3,8 @@
   <section class="about d-flex flex-column flex-md-row flex-wrap align-center justify-center ga-16 pa-5">
     <img class="mr-10" src="../assets/homePage/softwareserwisu.png" alt="Software serwisu">
     <v-responsive class="about-text-container text-center text-md-start mr-10">
-      <h2 class="text-white text-xs-h5 text-sm-h2 text-h4 pb-10 text-uppercase">Software serwisu</h2>
-      <p class="text-white text-h6 pb-10">
+      <h2 class="text-xs-h5 text-sm-h2 text-h4 pb-10 text-uppercase">Software serwisu</h2>
+      <p class="text-h6 pb-10">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam nisi amet, nihil et illo expedita animi sapiente
         quae numquam mollitia voluptatum unde! Molestias assumenda architecto veniam sunt libero rerum impedit! Lorem
         ipsum dolor sit amet consectetur, adipisicing elit. Totam nisi amet, nihil.
@@ -41,7 +41,8 @@ section.about {
   position: relative;
   width: 100%;
   min-height: 550px;
-  background-color: rgb(50, 220, 158);
+  background-color: var(--primary-yellow);
+  color: var(--primary-blue);
   margin-top: 100px;
   display: flex;
   flex-wrap: wrap;

@@ -1,9 +1,10 @@
+
 <template>
     <section class="d-flex justify-center flex-column flex-md-row align-center ga-14 mt-15">
         <div class="skew"></div>
         <div class="skew2"></div>
         <v-card v-for="item in items" :key="item.id" class="custom-card" tile>
-            <img class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
+            <img loading="lazy" class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
             <div class="card-content">
                 <p class="count">{{ item.count }}</p>
                 <p class="text-body-1">{{ item.description }}</p>
@@ -12,6 +13,8 @@
     </section>
 </template>
 <script>
+import axios from 'axios';
+
 export default {
     name: "timeLine",
     data() {
@@ -22,14 +25,14 @@ export default {
                     imgSrc: require('@/assets/homePage/sprzetnastanie.png'),
                     imgAlt: "Sprzęt na stanie",
                     count: 0,
-                    description: "Sprzęt na stanie"
+                    description: "Zarejestrowany sprzęt"
                 },
                 {
                     id: 2,
                     imgSrc: require('@/assets/homePage/sprzetwuzyciu.png'),
                     imgAlt: "Sprzęt w użyciu",
                     count: 0,
-                    description: "Sprzęt w użyciu"
+                    description: "Sprzęt przypisany do pracowników"
                 },
                 {
                     id: 3,
@@ -39,6 +42,22 @@ export default {
                     description: "Wpisanych pracowników"
                 },
             ]
+        }
+    },
+    mounted() {
+        this.fetchData();
+    },
+    methods: {
+        async fetchData() {
+            try {
+                const response = await axios.get('http://localhost:3000/api/getStatistics'); 
+                const data = response.data;
+                this.items[0].count = data.all
+                this.items[1].count = data.przypisane
+                this.items[2].count = data.pracownicy
+            } catch (error) {
+                console.error("Błąd pobierania danych: ", error);
+            }
         }
     }
 }
@@ -78,7 +97,7 @@ export default {
 .count {
     font-size: 32px;
     font-weight: bold;
-    color: #9edbc5;
+    color: var(--primary-yellow);
     margin-bottom: 10px;
 }
 
@@ -93,7 +112,7 @@ export default {
     display: block;
     top: 0;
     left: -150px;
-    background-color: rgb(50, 220, 158);
+    background-color: var(--primary-yellow);
     width: 100%;
     max-width: 300px;
     transform: skew(30deg);
@@ -105,7 +124,7 @@ export default {
     display: block;
     top: 0;
     right: -150px;
-    background-color: rgb(50, 220, 158);
+    background-color: var(--primary-yellow);
     width: 100%;
     max-width: 300px;
     transform: skew(-30deg);

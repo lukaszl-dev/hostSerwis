@@ -1,7 +1,7 @@
 <template>
   <v-app-bar class="nav" color="white" elevation="2" app>
     <router-link class="routerLink" to="/">
-      <div class="text-h6 ml-5 no-wrap"><span style="font-weight: 900; color: rgb(50, 220, 158);"
+      <div class="text-h6 ml-5 no-wrap"><span style="font-weight: 900; color: var(--primary-yellow)"
           class="text-h5">HOST</span> SERWIS</div>
     </router-link>
     <v-spacer></v-spacer>
@@ -16,9 +16,9 @@
           <v-icon icon="mdi-widgets mr-2" /> Magazyn
         </v-btn>
       </router-link>
-      <router-link activeClass="active" class="routerLink" to="/cosinnego">
+      <router-link activeClass="active" class="routerLink" to="/employees">
         <v-btn class="mr-5 text-body-1">
-          <v-icon icon="mdi-account-group mr-2" /> Pracownicy
+          <v-icon icon="mdi-qrcode mr-2" /> Skaner Kodów
         </v-btn>
       </router-link>
     </v-container>
@@ -49,9 +49,9 @@
 
       <v-list-item>
 
-        <router-link activeClass="active" class="routerLink" to="/cosinnego">
+        <router-link activeClass="active" class="routerLink" to="/employees">
           <v-btn @click="toggleDrawer()" class="text-body-1 custom-btn">
-            <v-icon icon="mdi-account-group mr-2" /> Pracownicy
+            <v-icon icon="mdi-qrcode mr-2" /> Skaner Kodów
           </v-btn>
         </router-link>
 
@@ -102,8 +102,8 @@ export default {
 }
 
 .active>.v-btn {
-  color: #32dc9e;
-  background-color: rgba(50, 220, 158, 0.2);
+  color: var(--primary-blue);
+  background-color: var(--primary-yellowAlpha);
 }
 
 .nonactive {
@@ -116,7 +116,7 @@ export default {
 }
 
 .active-hamburger {
-  color: #32dc9e;
+  color: var(--primary-blue);
 }
 
 .v-btn {
@@ -129,7 +129,7 @@ export default {
 }
 
 .v-btn:not(.active):hover {
-  color: #32dc9e;
+  color: var(--primary-blue);
   background-color: #f0f0f0;
 }
 </style>
