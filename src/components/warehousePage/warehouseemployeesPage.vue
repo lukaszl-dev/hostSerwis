@@ -75,7 +75,7 @@ const employeeToDelete = ref(null);
 const employees = ref([])
 const getEmployeess = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/getEmployeess`);
+        const response = await axios.get(`/api/getEmployeess`);
         if (response) {
             employees.value = response.data;
         }
@@ -97,7 +97,7 @@ const askToRemoveItem = (item) => {
 const removeEmployee = async () => {
     if (!employeeToDelete.value) return;
     try {
-        const response = await axios.post(`http://localhost:3000/api/removeEmployee?id=${employeeToDelete.value.id}`);
+        const response = await axios.post(`/api/removeEmployee?id=${employeeToDelete.value.id}`);
         if (response) {
             snackbarMessage.value = `Pracownik ${employeeToDelete.value.name} został usunięty.`;
             snackbar.value = true;
@@ -138,7 +138,7 @@ const addEmployee = async() => {
         return ;
     } 
     try {
-        const response = await axios.post("http://localhost:3000/api/addEmployee", {
+        const response = await axios.post("/api/addEmployee", {
             imie: employeeFirstname.value,
             nazwisko: employeeLastname.value
         });

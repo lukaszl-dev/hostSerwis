@@ -23,7 +23,7 @@ const generateBarcode = () => {
 
 const checkBarCode = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/getBarcode", {
+    const response = await axios.get("/api/getBarcode", {
       params: { id: route.params.id },
     });
 
@@ -32,7 +32,7 @@ const checkBarCode = async () => {
     } else {
       generateBarcode();
       try {
-        await axios.post("http://localhost:3000/api/addBarcode", {
+        await axios.post("/api/addBarcode", {
           id: route.params.id,
           code: barcodeValue.value,
         });

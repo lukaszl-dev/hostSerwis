@@ -76,7 +76,7 @@ const categoryToDelete = ref(null);
 const categories = ref([])
 const getCategories = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/getCategories`);
+        const response = await axios.get(`/api/getCategories`);
         if (response) {
             categories.value = response.data;
         }
@@ -102,7 +102,7 @@ const categoryNameValidator = [
 const addCategory = async () => {
     if (!categoryName.value) return showSnackbar("Podaj nazwę kategorii!");
     try {
-        const response = await axios.post("http://localhost:3000/api/addCategory", {
+        const response = await axios.post("/api/addCategory", {
             nazwa: categoryName.value,
         });
 
@@ -133,7 +133,7 @@ const confirmRemoveItem = async () => {
     if (!categoryToDelete.value) return;
 
     try {
-        const response = await axios.post("http://localhost:3000/api/dropCategory", {
+        const response = await axios.post("/api/dropCategory", {
             id: categoryToDelete.value.id,
         });
 

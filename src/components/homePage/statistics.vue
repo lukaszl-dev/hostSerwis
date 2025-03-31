@@ -50,7 +50,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('http://localhost:3000/api/getStatistics'); 
+                const response = await axios.get('/api/getStatistics'); 
                 const data = response.data;
                 this.items[0].count = data.all
                 this.items[1].count = data.przypisane

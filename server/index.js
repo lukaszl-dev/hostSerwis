@@ -3,22 +3,27 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-
-const { urlencoded } = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.static(path.join(__dirname, 'public')));
+
 
 const baza = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'test4'
+    user: 'admin',
+    password: 'A2NgOTkzQzmM8a',
+    database: 'hostSerwis'
 });
+
+app.use(express.static(path.join(__dirname, 'dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
 
 baza.connect(err => {
     if (err) {

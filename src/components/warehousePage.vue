@@ -31,7 +31,7 @@ export default {
             this.itemsPerPage = options.itemsPerPage;
 
             try {
-                const response = await axios.get('http://localhost:3000/api/getEquipment', {
+                const response = await axios.get('/api/getEquipment', {
                     params: {
                         page: this.currentPage,
                         itemsPerPage: this.itemsPerPage,
@@ -71,7 +71,7 @@ export default {
         async removeItem() {
             if (!this.itemToDelete) return;
             try {
-                const response = await axios.post(`http://localhost:3000/api/removeItem?id=${this.itemToDelete.id}`);
+                const response = await axios.post(`/api/removeItem?id=${this.itemToDelete.id}`);
                 if (response) {
                     this.snackbarMessage = `Przedmiot ${this.itemToDelete.nazwasprzetu} został usunięty.`;
                     this.snackbar = true;

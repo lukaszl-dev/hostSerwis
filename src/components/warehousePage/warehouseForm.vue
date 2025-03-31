@@ -69,7 +69,7 @@ let akcja = ref("");
 // funkcja pobierająca pracowników do listy a przy okazji dane do formularza
 const fetchData = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/getwarehousFormData?id=${id}`);
+        const response = await axios.get(`/api/getwarehousFormData?id=${id}`);
         if (response) {
             employees.value = response.data.employees;
             // console.log(response.data.nazwa)
@@ -105,7 +105,7 @@ onMounted(() => {
 // funkcja wysyłająca rządanie o update
 const updateItem = async () => {
     try {
-        const response = await axios.post('http://localhost:3000/api/updateItem', {
+        const response = await axios.post('/api/updateItem', {
             id: id,
             nprzedmiotu: nazwaPrzedmiotu.value,
             opis: opisPrzedmiotu.value,
@@ -129,7 +129,7 @@ const updateItem = async () => {
 // funkcja wysylajac rzadanie o dodanie
 const addItem = async () => {
     try {
-        const response = await axios.post('http://localhost:3000/api/addItem', {
+        const response = await axios.post('/api/addItem', {
             id: id,
             nprzedmiotu: nazwaPrzedmiotu.value,
             opis: opisPrzedmiotu.value,
