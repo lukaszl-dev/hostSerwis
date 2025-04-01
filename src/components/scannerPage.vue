@@ -26,20 +26,7 @@ export default {
     data() {
         return {
             searchTerm: '',
-            suggestions: [
-                '123',
-                '1456',
-                '1234',
-                '567',
-                '768',
-                '657',
-                '569',
-                'Orange',
-                'Peach',
-                'Pineapple',
-                'Strawberry',
-                'Watermelon'
-            ],
+            suggestions: [],
             filteredSuggestions: [],
             showSuggestions: false,
             snackbar: false,
