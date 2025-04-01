@@ -20,7 +20,7 @@ const { handleSubmit } = useForm({
         fprzedmiotu() {
             if (firmaPrzedmiotu.value?.length >= 2 && firmaPrzedmiotu.value?.length <= 50) return true
 
-            return 'Firma przedmiotu nie może być krótsza od 2 znaków i dłuższa od 50 znaków'
+            return 'Producent przedmiotu nie może być krótsza od 2 znaków i dłuższa od 50 znaków'
         },
         pracownik() {
             if (zaznaczonyPracownik.value) return true
@@ -177,7 +177,7 @@ const submit = handleSubmit(() => {
                         :error-messages="nprzedmiotu.errorMessage.value" label="Nazwa przedmiotu"></v-text-field>
 
                     <v-text-field v-model="firmaPrzedmiotu" :counter="50"
-                        :error-messages="fprzedmiotu.errorMessage.value" label="Firma przedmiotu"></v-text-field>
+                        :error-messages="fprzedmiotu.errorMessage.value" label="Producent przedmiotu"></v-text-field>
 
                     <v-textarea v-model="opisPrzedmiotu" :counter="500" :error-messages="opis.errorMessage.value"
                         label="Opis przedmiotu"></v-textarea>

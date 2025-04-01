@@ -501,6 +501,34 @@ app.post('/api/addBarcode', (req, res) => {
     });
 });
 
+app.get('/api/getBarcodes', (req, res) => {
+    const query = "SELECT kod_przedmiotu FROM przedmiot";
+    baza.query(query, (err, results) => {
+        if (err) {
+            console.error('Błąd zapytania:', err);
+            return res.status(500).send('Błąd serwera');
+        } else {
+            const filteredResults = results.filter(result => result.kod_przedmiotu !== null);
+            res.json(filteredResults)
+        }
+    });
+});
+
+app.post('/api/getBarcodeId', (req, res) => {
+    const { code } = req.body;
+
+
+    const query = "SELECT id_przedmiotu FROM przedmiot WHERE kod_przedmiotu = ?";
+    baza.query(query, [code], (err, results) => {
+        if (err) {
+            console.error('Błąd zapytania:', err);
+            return res.status(500).send('Błąd serwera');
+        } else {
+            res.json(results);
+        }
+    });
+});
+
 
 
 app.listen(PORT, () => {

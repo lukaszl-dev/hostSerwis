@@ -15,7 +15,7 @@
           <v-icon icon="mdi-widgets mr-2" /> Magazyn
         </v-btn>
       </router-link>
-      <router-link activeClass="active" class="routerLink" to="/employees">
+      <router-link activeClass="active" class="routerLink" to="/scannerPage">
         <v-btn class="mr-5 text-body-1">
           <v-icon icon="mdi-qrcode mr-2" /> Skaner Kodów
         </v-btn>
@@ -48,7 +48,7 @@
 
       <v-list-item>
 
-        <router-link activeClass="active" class="routerLink" to="/employees">
+        <router-link activeClass="active" class="routerLink" to="/scannerPage">
           <v-btn @click="toggleDrawer()" class="text-body-1 custom-btn">
             <v-icon icon="mdi-qrcode mr-2" /> Skaner Kodów
           </v-btn>

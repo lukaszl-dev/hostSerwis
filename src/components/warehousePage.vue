@@ -9,7 +9,7 @@ export default {
                 { title: 'Sprzęt', align: 'start', sortable: false, key: 'nazwasprzetu' },
                 { title: 'Właściciel', key: 'owner', align: 'end' },
                 { title: 'Opis urządzenia', key: 'opis', align: 'end' },
-                { title: 'Firma urządzenia', key: 'firma', align: 'end' },
+                { title: 'Producent urządzenia', key: 'firma', align: 'end' },
                 { title: 'Kategoria', key: 'rodzaj', align: 'end' },
                 { title: 'Akcje', key: 'actions', align: 'center', sortable: false }
             ],
