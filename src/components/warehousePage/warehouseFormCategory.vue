@@ -17,7 +17,7 @@
         </v-card>
     </v-dialog>
     <v-sheet class="mx-auto" width="300">
-        <v-form fast-fail @submit.prevent>
+        <v-form ref="form" fast-fail @submit.prevent>
             <v-text-field v-model="categoryName" :rules="categoryNameValidator" label="Nazwa Kategorii"></v-text-field>
             <v-btn class="mt-2 btn-Submit text-h6 text-uppercase" type="submit" block
                 @click="addCategory()">Dodaj</v-btn>
@@ -58,6 +58,9 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
+
+// formularz
+const form = ref(null);
 
 // snackbar [pasek informacyjny pojawiajacy sie po wywaleniu sie bledu]
 let snackbar = ref(false);
@@ -110,7 +113,7 @@ const addCategory = async () => {
             showSnackbar("Pomyślnie dodano kategorię!");
             await getCategories();
             categoryName.value = "";
-            
+            form.value?.reset();
         } else {
             showSnackbar("Wystąpił problem z dodawaniem kategorii!");
         }

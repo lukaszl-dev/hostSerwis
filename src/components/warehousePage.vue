@@ -7,7 +7,7 @@ export default {
             currentPage: 1,
             headers: [
                 { title: 'Sprzęt', align: 'start', sortable: false, key: 'nazwasprzetu' },
-                { title: 'Właściciel', key: 'owner', align: 'end' },
+                { title: 'Użytkownik', key: 'owner', align: 'end' },
                 { title: 'Opis urządzenia', key: 'opis', align: 'end' },
                 { title: 'Producent urządzenia', key: 'firma', align: 'end' },
                 { title: 'Kategoria', key: 'rodzaj', align: 'end' },

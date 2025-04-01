@@ -17,7 +17,7 @@
         </v-card>
     </v-dialog>
     <v-sheet class="mx-auto mt-10" width="300">
-        <v-form fast-fail @submit.prevent>
+        <v-form ref="form" fast-fail @submit.prevent>
             <v-text-field v-model="employeeFirstname" :rules="employeeFirstnameValidator" label="Imie"></v-text-field>
             <v-text-field v-model="employeeLastname" :rules="employeeLastnameValidator" label="Nazwisko"></v-text-field>
             <v-btn class="mt-2 btn-Submit text-h6 text-uppercase" type="submit" block
@@ -62,6 +62,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+
+// formularz
+const form = ref(null);
 
 // Snackbar
 const snackbar = ref(false);
@@ -149,6 +152,7 @@ const addEmployee = async() => {
             await getEmployeess();
             employeeFirstname.value = "";
             employeeLastname.value = "";
+            form.value?.reset();
         } else {
             snackbarMessage.value = `Wystąpił problem!`;
             snackbar.value = true;

@@ -1,14 +1,17 @@
 
 <template>
+ 
     <section class="d-flex justify-center flex-column flex-md-row align-center ga-14 mt-15">
         <div class="skew"></div>
         <div class="skew2"></div>
         <v-card v-for="item in items" :key="item.id" class="custom-card" tile>
-            <img loading="lazy" class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
-            <div class="card-content">
-                <p class="count">{{ item.count }}</p>
-                <p class="text-body-1">{{ item.description }}</p>
-            </div>
+            <router-link class="routerLink"  :to="item.href">
+                <img loading="lazy" class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
+                <div class="card-content">
+                    <p class="count">{{ item.count }}</p>
+                    <p class="text-body-1">{{ item.description }}</p>
+                </div>
+            </router-link>
         </v-card>
     </section>
 </template>
@@ -25,21 +28,24 @@ export default {
                     imgSrc: require('@/assets/homePage/sprzetnastanie.png'),
                     imgAlt: "Sprzęt na stanie",
                     count: 0,
-                    description: "Zarejestrowany sprzęt"
+                    description: "Zarejestrowany sprzęt",
+                    href: "/warehouse"
                 },
                 {
                     id: 2,
                     imgSrc: require('@/assets/homePage/sprzetwuzyciu.png'),
                     imgAlt: "Sprzęt w użyciu",
                     count: 0,
-                    description: "Sprzęt przypisany do pracowników"
+                    description: "Sprzęt przypisany do pracowników",
+                    href: "/warehouse"
                 },
                 {
                     id: 3,
                     imgSrc: require('@/assets/homePage/wpisanychpracownikow.png'),
                     imgAlt: "Wpisanych pracowników",
                     count: 0,
-                    description: "Wpisanych pracowników"
+                    description: "Wpisanych pracowników",
+                    href: "/warehouseEmployees"
                 },
             ]
         }
@@ -129,6 +135,10 @@ export default {
     max-width: 300px;
     transform: skew(-30deg);
     height: 100dvh;
+}
+
+.routerLink {
+    text-decoration: none;
 }
 
 
