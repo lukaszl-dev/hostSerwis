@@ -124,10 +124,10 @@ export default {
         </v-dialog>
         <v-responsive>
             <v-btn class="ma-4 text-h6 btn-Add" @click="addEquipment()">
-                <v-icon icon="mdi-plus mr-2" /> Dodaj sprzęt
+                <v-icon icon="mdi-laptop mr-2" /> Dodaj sprzęt
             </v-btn>
             <v-btn class="ma-4 text-h6 btn-Add" @click="addCategory()">
-                <v-icon icon="mdi-plus mr-2" /> Zarządzaj Kategoriami
+                <v-icon icon="mdi-file mr-2" /> Zarządzaj Kategoriami
             </v-btn>
             <v-btn class="ma-4 text-h6 btn-Add" @click="EmployeeModule()">
                 <v-icon icon="mdi-account-group mr-2" /> Zarządzaj Pracownikami
@@ -167,12 +167,13 @@ export default {
 }
 
 .edit:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
 }
 
 .alert__notify {
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
 }
 
 .btn-Add {
@@ -187,7 +188,7 @@ export default {
 }
 
 .btn-Add:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
 }
 </style>

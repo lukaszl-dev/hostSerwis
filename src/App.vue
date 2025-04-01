@@ -4,7 +4,7 @@
     <v-main>
       <router-view />
     </v-main>
-    <scroll :scrollY="scrollY" />
+    <scroll v-if="!isWarehousePage" :scrollY="scrollY" />
     <footerComp />
   </v-app>
 </template>
@@ -19,6 +19,11 @@ export default {
     return {
       scrollY: 0,
     };
+  },
+  computed: {
+    isWarehousePage() {
+      return this.$route.path === "/warehouse";
+    },
   },
   methods: {
     updateScroll() {
@@ -42,8 +47,9 @@ export default {
 <style>
 :root {
   --primary-yellow: #ffcd03;
-  --primary-yellowAlpha: rgba(255, 205, 3,0.7);
-  --primary-blue: #284f75;
+  /* --primary-yellowAlpha: rgba(255, 205, 3,0.7); */
+  --primary-blueAlpha: #284f756f;
+  --primary-blue:  #284f75;
 }
 
 html {

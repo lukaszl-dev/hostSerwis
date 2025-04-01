@@ -1,8 +1,7 @@
 <template>
   <v-app-bar class="nav" color="white" elevation="2" app>
     <router-link class="routerLink" to="/">
-      <div class="text-h6 ml-5 no-wrap"><span style="font-weight: 900; color: var(--primary-yellow)"
-          class="text-h5">HOST</span> SERWIS</div>
+      <div class="text-h6 no-wrap d-flex justify-center align-center"><img class="logoImg" src="../../assets/logo.png"></div>
     </router-link>
     <v-spacer></v-spacer>
     <v-container class="d-none d-md-flex justify-end">
@@ -103,7 +102,7 @@ export default {
 
 .active>.v-btn {
   color: var(--primary-blue);
-  background-color: var(--primary-yellowAlpha);
+  background-color: var(--primary-blueAlpha);
 }
 
 .nonactive {
@@ -113,6 +112,13 @@ export default {
 
 .no-wrap {
   white-space: nowrap;
+}
+
+.logoImg {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  margin: 15px;
 }
 
 .active-hamburger {

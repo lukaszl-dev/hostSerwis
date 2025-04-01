@@ -26,7 +26,7 @@ export default {
                     image: require('@/assets/homePage/timeline/inwentaryzacja.png'),
                     title: "Inwentaryzuj",
                     alt: "Proces inwentaryzacji",
-                    description: "Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sedeuismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae."
+                    description: "Inwentaryzacja to kluczowy proces monitorowania stanów magazynowych i kontroli przepływu towarów. Dzięki nowoczesnym technologiom, takim jak kody kreskowe, jest szybka, dokładna i efektywna."
                 },
                 {
                     id: 2,
@@ -34,7 +34,7 @@ export default {
                     image: require('@/assets/homePage/timeline/sprawdzanie.png'),
                     title: "Sprawdzaj",
                     alt: "Sprawdzanie",
-                    description: "Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sedeuismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae."
+                    description: "Dzięki kodom kreskowym można szybko i dokładnie sprawdzić przynależność przedmiotu do konkretnej lokalizacji, użytkownika lub działu. System umożliwia natychmiastowy dostęp do szczegółowych informacji, co ułatwia zarządzanie zasobami i eliminuje pomyłki."
                 },
                 {
                     id: 3,
@@ -42,7 +42,7 @@ export default {
                     image: require('@/assets/homePage/timeline/dokumentacja.png'),
                     title: "Dokumentuj",
                     alt: "Tworzenie dokumentacji",
-                    description: "Lorem ipsum dolor sit amet, no nam oblique veritus. Commune scaevola imperdiet nec ut, sedeuismod convenire principes at. Est et nobis iisque percipit, an vim zril disputando voluptatibus, vix an salutandi sententiae."
+                    description: "Dokumentowanie inwentaryzacji polega na szczegółowym zapisie wszystkich zasobów posiadanych przez firmę lub organizację, w celu określenia ich ilości, stanu oraz wartości. Dzięki zastosowaniu oprogramowania, proces ten staje się szybszy, bardziej precyzyjny i mniej podatny na błędy, co umożliwia efektywne zarządzanie zasobami."
                 },
             ]
         };
@@ -57,7 +57,7 @@ export default {
 
 .timeline__container {
     max-width: 80%;
-    background-color: var(--primary-yellow);
+    background-color: var(--primary-blue);
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -67,7 +67,7 @@ export default {
 }
 
 .timeline-text-box {
-    color: var(--primary-blue);
+    color: var(--primary-yellow);
     width: 70%;
     padding: 10px;
 }

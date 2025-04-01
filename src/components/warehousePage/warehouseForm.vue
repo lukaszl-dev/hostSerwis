@@ -13,9 +13,9 @@ const { handleSubmit } = useForm({
             return 'Nazwa przedmiotu nie może być krótsza od 3 znaków i dłuższa od 100 znaków'
         },
         opis() {
-            if (opisPrzedmiotu.value?.length >= 10 && opisPrzedmiotu.value?.length <= 250) return true
+            if (opisPrzedmiotu.value?.length >= 10 && opisPrzedmiotu.value?.length <= 500) return true
 
-            return 'Opis przedmiotu nie może być krótszy od 10 znaków i dłuższy od 250 znaków'
+            return 'Opis przedmiotu nie może być krótszy od 10 znaków i dłuższy od 500 znaków'
         },
         fprzedmiotu() {
             if (firmaPrzedmiotu.value?.length >= 2 && firmaPrzedmiotu.value?.length <= 50) return true
@@ -179,7 +179,7 @@ const submit = handleSubmit(() => {
                     <v-text-field v-model="firmaPrzedmiotu" :counter="50"
                         :error-messages="fprzedmiotu.errorMessage.value" label="Firma przedmiotu"></v-text-field>
 
-                    <v-textarea v-model="opisPrzedmiotu" :counter="250" :error-messages="opis.errorMessage.value"
+                    <v-textarea v-model="opisPrzedmiotu" :counter="500" :error-messages="opis.errorMessage.value"
                         label="Opis przedmiotu"></v-textarea>
 
                     <v-select v-model="zaznaczonyPracownik" :items="employees" label="Wybierz pracownika"
@@ -207,8 +207,8 @@ const submit = handleSubmit(() => {
 }
 
 .v-btn:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
 }
 
 .v-checkbox .v-label {

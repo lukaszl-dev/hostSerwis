@@ -26,7 +26,7 @@ export default {
     right: 20px;
     width: 55px;
     height: 55px;
-    background-color: var(--primary-yellow) !important;
+    background-color: var(--primary-blue) !important;
     color: white !important;
     display: flex;
     align-items: center;
@@ -38,7 +38,7 @@ export default {
 }
 
 .btn-to-top:hover {
-    background-color: var(--primary-yellowAlpha) !important;
+    background-color: var(--primary-blueAlpha) !important;
     transform: scale(1.1);
 }
 </style>

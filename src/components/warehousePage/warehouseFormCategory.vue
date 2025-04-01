@@ -26,7 +26,7 @@
     <h2 class="mt-16 pa-5">Obecne kategorie:</h2>
     <p class="text-body-2"><b>Uwaga!</b> Usuwając kategorię która jest wykorzystywana przez istniejące rekordy, automatycznie zostanie przypisana kategoria "inne" !!!</p>
     <v-container class="d-flex justify-center align-center">
-        <v-table class="form-category-table pa-5 text-h6 text-center" height="800px">
+        <v-table class="form-category-table pa-5 text-h6 text-center">
             <thead>
                 <tr>
                     <th class="text-center">
@@ -168,14 +168,13 @@ const confirmRemoveItem = async () => {
 }
 
 .btn-Submit:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
 }
 
 @media (max-width: 768px) {
-
     .form-category-table {
-        width: 85%;
+        width: 100%;
         height: auto;
     }
 }

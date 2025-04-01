@@ -5,9 +5,7 @@
     <v-responsive class="about-text-container text-center text-md-start mr-10">
       <h2 class="text-xs-h5 text-sm-h2 text-h4 pb-10 text-uppercase">Software serwisu</h2>
       <p class="text-h6 pb-10">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Totam nisi amet, nihil et illo expedita animi sapiente
-        quae numquam mollitia voluptatum unde! Molestias assumenda architecto veniam sunt libero rerum impedit! Lorem
-        ipsum dolor sit amet consectetur, adipisicing elit. Totam nisi amet, nihil.
+        Oprogramowanie do Inwentaryzacji i Zarządzania Magazynem to narzędzie do monitorowania stanów, dokumentowania przepływu towarów i kontrolowania procesów serwisowych. Intuicyjny interfejs i przydatne funkcje umożliwiają szybkie sprawdzanie dostępności produktów oraz rejestrowanie operacji. System obsługuje kody kreskowe, co znacząco ułatwia użytkowanie.
       </p>
     </v-responsive>
     <div class="circle"></div>
@@ -41,8 +39,8 @@ section.about {
   position: relative;
   width: 100%;
   min-height: 550px;
-  background-color: var(--primary-yellow);
-  color: var(--primary-blue);
+  background-color: var(--primary-blue);
+  color: var(--primary-yellow);
   margin-top: 100px;
   display: flex;
   flex-wrap: wrap;

@@ -97,7 +97,7 @@ export default {
 .count {
     font-size: 32px;
     font-weight: bold;
-    color: var(--primary-yellow);
+    color: var(--primary-blue);
     margin-bottom: 10px;
 }
 
@@ -112,7 +112,7 @@ export default {
     display: block;
     top: 0;
     left: -150px;
-    background-color: var(--primary-yellow);
+    background-color: var(--primary-blue);
     width: 100%;
     max-width: 300px;
     transform: skew(30deg);
@@ -124,7 +124,7 @@ export default {
     display: block;
     top: 0;
     right: -150px;
-    background-color: var(--primary-yellow);
+    background-color: var(--primary-blue);
     width: 100%;
     max-width: 300px;
     transform: skew(-30deg);

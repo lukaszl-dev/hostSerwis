@@ -30,7 +30,7 @@
     <p class="text-h6 mt-2">⭐ Naciśnij na dane pracownika aby otworzyć powiązane z nim przedmioty 🎉</p>
 
     <v-container class="d-flex justify-center align-center">
-        <v-table class="form-category-table pa-5 text-h6 text-center" height="800px">
+        <v-table class="form-emplyee-table pa-5 text-h6 text-center">
             <thead>
                 <tr>
                     <th class="text-center">
@@ -179,7 +179,20 @@ const addEmployee = async() => {
 }
 
 .btn-Submit:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-yellow);
+    color: var(--primary-yellow);
+    background-color: var(--primary-blue);
+}
+
+
+.form-emplyee-table {
+    width: 60%;
+    height: auto;
+}
+
+@media (max-width: 768px) {
+    .form-emplyee-table {
+        width: 100%;
+        height: auto;
+    }
 }
 </style>

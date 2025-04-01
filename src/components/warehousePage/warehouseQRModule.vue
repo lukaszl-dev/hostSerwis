@@ -77,7 +77,7 @@ onMounted(checkBarCode);
 }
 
 .v-btn:hover {
-  color: var(--primary-blue);
-  background-color: var(--primary-yellow);
+  color: var(--primary-yellow);
+  background-color: var(--primary-blue);
 }
 </style>
