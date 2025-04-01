@@ -482,6 +482,20 @@ app.get('/api/getBarcode', (req, res) => {
     });
 });
 
+app.get('/api/checkBarcode', (req, res) => {
+    const { code } = req.query;
+    const query = "SELECT id_przedmiotu FROM przedmiot WHERE kod_przedmiotu = ?";
+    baza.query(query, code, (err, results) => {
+        if (err) {
+            console.error('Błąd zapytania:', err);
+            return res.status(500).send('Błąd serwera');
+        } else {
+            res.json(results)
+        }
+    });
+});
+
+
 
 app.post('/api/addBarcode', (req, res) => {
     const { id, code } = req.body;

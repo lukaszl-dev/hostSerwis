@@ -21,6 +21,17 @@ const generateBarcode = () => {
   barcodeValue.value = baseId + randomNumbers;
 };
 
+
+const checkBarcodeExists = async (code) => {
+  try {
+    const response = await axios.get("/api/checkBarcode", { params: { code } });
+    return response.data.length > 0;
+  } catch (e) {
+    console.error("Błąd sprawdzania kodu kreskowego:", e);
+    return false;
+  }
+};
+
 const checkBarCode = async () => {
   try {
     const response = await axios.get("/api/getBarcode", {
@@ -30,7 +41,15 @@ const checkBarCode = async () => {
     if (response.data.length > 0 && response.data[0].kod_przedmiotu) {
       barcodeValue.value = response.data[0].kod_przedmiotu;
     } else {
+
       generateBarcode();
+
+      let barcodeExists = await checkBarcodeExists(barcodeValue.value);
+      while (barcodeExists) {
+        generateBarcode();
+        barcodeExists = await checkBarcodeExists(barcodeValue.value);
+      }
+
       try {
         await axios.post("/api/addBarcode", {
           id: route.params.id,
@@ -49,11 +68,11 @@ const printBarcode = () => {
   const barcodeElement = document.querySelector('.barcode-container');
   const printWindow = window.open('', '', 'width=800, height=600');
   printWindow.document.write('<html><head><title>Drukowanie</title></head><body>');
-  printWindow.document.write(barcodeElement.outerHTML);  
+  printWindow.document.write(barcodeElement.outerHTML);
   printWindow.document.write('</body></html>');
   printWindow.document.close();
-  printWindow.focus();  
-  printWindow.print(); 
+  printWindow.focus();
+  printWindow.print();
   printWindow.onafterprint = function () {
     printWindow.close();
   };
