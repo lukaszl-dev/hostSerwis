@@ -35,7 +35,8 @@ export default {
                     params: {
                         page: this.currentPage,
                         itemsPerPage: this.itemsPerPage,
-                        employee: this.employee
+                        employee: this.employee,
+                        filter: this.$route.query.filter || null
                     }
                 });
 
@@ -89,12 +90,12 @@ export default {
         addEquipment() {
             this.$router.push({ name: "WarehouseFormAdd" });
         },
-        EmployeeModule(){
+        EmployeeModule() {
             this.$router.push({ name: "WarehouseEmployeesPage" });
         },
-        QRModule(id){
-            this.$router.push({ name: "WarehouseQRModule", params: {id: id} });
-        },      
+        QRModule(id) {
+            this.$router.push({ name: "WarehouseQRModule", params: { id: id } });
+        },
     },
     mounted() {
         this.loadItems({ page: this.currentPage, itemsPerPage: this.itemsPerPage });

@@ -46,79 +46,94 @@ baza.connect(err => {
 // });
 
 app.get('/api/getEquipment', (req, res) => {
-    const { page = '1', itemsPerPage = '10', employee = '-1' } = req.query;
+    const { 
+        page = '1', 
+        itemsPerPage = '10', 
+        employee = '-1', 
+        sortBy = 'nazwasprzetu', 
+        sortDesc = 'asc',
+        filter = null
+    } = req.query;
 
     const pageNumber = parseInt(page, 10);
     const itemsPerPageNumber = parseInt(itemsPerPage, 10);
     const employeeNumber = parseInt(employee, 10);
+    const sortKey = sortBy || "nazwasprzetu";
+    const sortDirection = (sortDesc === 'true' || sortDesc === true) ? "DESC" : "ASC";
+
+    const sortableColumns = {
+        nazwasprzetu: "przedmiot.nazwa_przedmiotu",
+        owner: "daneW",
+        firma: "przedmiot.firma_przedmiotu",
+        rodzaj: "kategorie.nazwa",
+    };
+    const sortColumn = sortableColumns[sortKey] || "przedmiot.nazwa_przedmiotu";
 
     if (isNaN(pageNumber) || isNaN(itemsPerPageNumber) || isNaN(employeeNumber)) {
         return res.status(400).send('Błąd - niepoprawne argumenty!');
     }
 
-    const check = "SELECT id_przedmiotu FROM przedmiot WHERE przedmiot.id_wlasciciela = ?";
-    baza.query(check, [employeeNumber], (err, results) => {
+    let baseWhere = 'WHERE 1=1';
+    const queryParams = [];
+
+    
+    if (filter === 'przypisane') {
+        baseWhere += ' AND przedmiot.id_wlasciciela != 1';
+    } else if (filter === 'wolne') {
+        baseWhere += ' AND przedmiot.id_wlasciciela =  1';
+    }
+
+    if (employeeNumber !== -1) {
+        baseWhere += ' AND przedmiot.id_wlasciciela = ?';
+        queryParams.push(employeeNumber);
+    }
+
+    let query = `
+        SELECT przedmiot.id_przedmiotu, przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, 
+               przedmiot.firma_przedmiotu, 
+               CONCAT(wlasciciel.imie_wlasciciela, ' ', wlasciciel.nazwisko_wlasciciela) AS daneW, 
+               kategorie.nazwa AS rodzaj_przedmiotu
+        FROM przedmiot 
+        LEFT JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
+        INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
+        ${baseWhere}
+        ORDER BY ${sortColumn} ${sortDirection}
+    `;
+
+    if (itemsPerPageNumber !== -1) {
+        const offset = (pageNumber - 1) * itemsPerPageNumber;
+        query += ` LIMIT ? OFFSET ?`;
+        queryParams.push(itemsPerPageNumber, offset);
+    }
+
+    baza.query(query, queryParams, (err, results) => {
         if (err) {
-            console.error('Błąd zapytania:', err);
-            return res.status(500).send('Błąd serwera');
+            console.error('Błąd podczas pobierania danych:', err);
+            return res.status(500).send('Wewnętrzny błąd serwera');
         }
 
-        if (results.length == 0 && employeeNumber != -1) {
-            return res.status(404).send('Brak przedmiotów dla podanego właściciela');
-        } else {
-            let query = `
-                SELECT przedmiot.id_przedmiotu, przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, 
-                    przedmiot.firma_przedmiotu, 
-                    CONCAT(wlasciciel.imie_wlasciciela, ' ', wlasciciel.nazwisko_wlasciciela) AS daneW, 
-                    kategorie.nazwa AS rodzaj_przedmiotu
-                FROM przedmiot 
-                INNER JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
-                INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
-            `;
+        const countQuery = `
+            SELECT COUNT(*) AS total 
+            FROM przedmiot 
+            LEFT JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
+            INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
+            ${baseWhere}
+        `;
 
-            const queryParams = [];
-
-            if (employeeNumber !== -1) {
-                query += ` WHERE przedmiot.id_wlasciciela = ?`;
-                queryParams.push(employeeNumber);
+        baza.query(countQuery, queryParams.slice(0, queryParams.length - 2), (countErr, countResults) => {
+            if (countErr) {
+                console.error('Błąd podczas pobierania całkowitej liczby rekordów:', countErr);
+                return res.status(500).send('Wewnętrzny błąd serwera');
             }
 
-            query += ` ORDER BY przedmiot.id_przedmiotu DESC`;
-
-            if (itemsPerPageNumber !== -1) {
-                const offset = (pageNumber - 1) * itemsPerPageNumber;
-                query += ` LIMIT ? OFFSET ?`;
-                queryParams.push(itemsPerPageNumber, offset);
-            }
-
-            baza.query(query, queryParams, (err, results) => {
-                if (err) {
-                    console.error('Błąd podczas pobierania danych:', err);
-                    return res.status(500).send('Wewnętrzny błąd serwera');
-                }
-
-                // Pobranie dla paginacji
-                const countQuery = `
-                    SELECT COUNT(*) AS total FROM przedmiot
-                    ${employeeNumber !== -1 ? 'WHERE przedmiot.id_wlasciciela = ?' : ''}
-                `;
-
-                baza.query(countQuery, employeeNumber !== -1 ? [employeeNumber] : [], (countErr, countResults) => {
-                    if (countErr) {
-                        console.error('Błąd podczas pobierania całkowitej liczby rekordów:', countErr);
-                        return res.status(500).send('Wewnętrzny błąd serwera');
-                    }
-
-                    const totalItems = countResults[0].total;
-                    res.json({
-                        items: results,
-                        total: totalItems,
-                        currentPage: pageNumber,
-                        totalPages: itemsPerPageNumber !== -1 ? Math.ceil(totalItems / itemsPerPageNumber) : 1,
-                    });
-                });
+            const totalItems = countResults[0].total;
+            res.json({
+                items: results,
+                total: totalItems,
+                currentPage: pageNumber,
+                totalPages: itemsPerPageNumber !== -1 ? Math.ceil(totalItems / itemsPerPageNumber) : 1,
             });
-        }
+        });
     });
 });
 
