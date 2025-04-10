@@ -30,52 +30,6 @@ app.get('/items', (req, res) => {
 
   const tables = ['kategorie', 'przedmiot', 'właściciel'];
 
-//   tables.forEach(table => {
-//     const route = `/api/${table}`;
-
-//       // GET all
-//   app.get(route, (req, res) => {
-//     baza.query(`SELECT * FROM \`${table}\``, (err, results) => {
-//       if (err) return res.status(500).json(err);
-//       res.json(results);
-//     });
-//   });
-
-//   // GET by ID
-//   app.get(`${route}/:id`, (req, res) => {
-//     baza.query(`SELECT * FROM \`${table}\` WHERE id = ?`, [req.params.id], (err, results) => {
-//       if (err) return res.status(500).json(err);
-//       res.json(results[0]);
-//     });
-//   });
-
-//   // POST create
-//   app.post(route, (req, res) => {
-//     const { name } = req.body;
-//     baza.query(`INSERT INTO \`${table}\` (name) VALUES (?)`, [name], (err, result) => {
-//       if (err) return res.status(500).json(err);
-//       res.status(201).json({ id: result.insertId, name });
-//     });
-//   });
-
-//   // PUT update
-//   app.put(`${route}/:id`, (req, res) => {
-//     const { name } = req.body;
-//     baza.query(`UPDATE \`${table}\` SET name = ? WHERE id = ?`, [name, req.params.id], (err) => {
-//       if (err) return res.status(500).json(err);
-//       res.json({ id: req.params.id, name });
-//     });
-//   });
-
-//   // DELETE
-//   app.delete(`${route}/:id`, (req, res) => {
-//     baza.query(`DELETE FROM \`${table}\` WHERE id = ?`, [req.params.id], (err) => {
-//       if (err) return res.status(500).json(err);
-//       res.status(204).send();
-//     });
-//   });
-// });
-
 // koniec swaggera
 
 
