@@ -3,27 +3,88 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
+// potrzebne do swaggera
+const swaggerUi = require("swagger-ui-express");
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load("./swagger.yaml");
+
+
+
+const { urlencoded } = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(urlencoded({ extended: true }));
+
+// swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
+app.get('/items', (req, res) => {
+    res.json(baza);
+  });
+
+
+  const tables = ['kategorie', 'przedmiot', 'właściciel'];
+
+//   tables.forEach(table => {
+//     const route = `/api/${table}`;
+
+//       // GET all
+//   app.get(route, (req, res) => {
+//     baza.query(`SELECT * FROM \`${table}\``, (err, results) => {
+//       if (err) return res.status(500).json(err);
+//       res.json(results);
+//     });
+//   });
+
+//   // GET by ID
+//   app.get(`${route}/:id`, (req, res) => {
+//     baza.query(`SELECT * FROM \`${table}\` WHERE id = ?`, [req.params.id], (err, results) => {
+//       if (err) return res.status(500).json(err);
+//       res.json(results[0]);
+//     });
+//   });
+
+//   // POST create
+//   app.post(route, (req, res) => {
+//     const { name } = req.body;
+//     baza.query(`INSERT INTO \`${table}\` (name) VALUES (?)`, [name], (err, result) => {
+//       if (err) return res.status(500).json(err);
+//       res.status(201).json({ id: result.insertId, name });
+//     });
+//   });
+
+//   // PUT update
+//   app.put(`${route}/:id`, (req, res) => {
+//     const { name } = req.body;
+//     baza.query(`UPDATE \`${table}\` SET name = ? WHERE id = ?`, [name, req.params.id], (err) => {
+//       if (err) return res.status(500).json(err);
+//       res.json({ id: req.params.id, name });
+//     });
+//   });
+
+//   // DELETE
+//   app.delete(`${route}/:id`, (req, res) => {
+//     baza.query(`DELETE FROM \`${table}\` WHERE id = ?`, [req.params.id], (err) => {
+//       if (err) return res.status(500).json(err);
+//       res.status(204).send();
+//     });
+//   });
+// });
+
+// koniec swaggera
 
 
 const baza = mysql.createConnection({
     host: 'localhost',
-    user: 'admin',
-    password: 'A2NgOTkzQzmM8a',
-    database: 'hostSerwis'
+    user: 'root',
+    password: '',
+    database: 'test2'
 });
-
-app.use(express.static(path.join(__dirname, 'dist')));
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-});
-
 
 baza.connect(err => {
     if (err) {
@@ -46,94 +107,79 @@ baza.connect(err => {
 // });
 
 app.get('/api/getEquipment', (req, res) => {
-    const { 
-        page = '1', 
-        itemsPerPage = '10', 
-        employee = '-1', 
-        sortBy = 'nazwasprzetu', 
-        sortDesc = 'asc',
-        filter = null
-    } = req.query;
+    const { page = '1', itemsPerPage = '10', employee = '-1' } = req.query;
 
     const pageNumber = parseInt(page, 10);
     const itemsPerPageNumber = parseInt(itemsPerPage, 10);
     const employeeNumber = parseInt(employee, 10);
-    const sortKey = sortBy || "nazwasprzetu";
-    const sortDirection = (sortDesc === 'true' || sortDesc === true) ? "DESC" : "ASC";
-
-    const sortableColumns = {
-        nazwasprzetu: "przedmiot.nazwa_przedmiotu",
-        owner: "daneW",
-        firma: "przedmiot.firma_przedmiotu",
-        rodzaj: "kategorie.nazwa",
-    };
-    const sortColumn = sortableColumns[sortKey] || "przedmiot.nazwa_przedmiotu";
 
     if (isNaN(pageNumber) || isNaN(itemsPerPageNumber) || isNaN(employeeNumber)) {
         return res.status(400).send('Błąd - niepoprawne argumenty!');
     }
 
-    let baseWhere = 'WHERE 1=1';
-    const queryParams = [];
-
-    
-    if (filter === 'przypisane') {
-        baseWhere += ' AND przedmiot.id_wlasciciela != 1';
-    } else if (filter === 'wolne') {
-        baseWhere += ' AND przedmiot.id_wlasciciela =  1';
-    }
-
-    if (employeeNumber !== -1) {
-        baseWhere += ' AND przedmiot.id_wlasciciela = ?';
-        queryParams.push(employeeNumber);
-    }
-
-    let query = `
-        SELECT przedmiot.id_przedmiotu, przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, 
-               przedmiot.firma_przedmiotu, 
-               CONCAT(wlasciciel.imie_wlasciciela, ' ', wlasciciel.nazwisko_wlasciciela) AS daneW, 
-               kategorie.nazwa AS rodzaj_przedmiotu
-        FROM przedmiot 
-        LEFT JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
-        INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
-        ${baseWhere}
-        ORDER BY ${sortColumn} ${sortDirection}
-    `;
-
-    if (itemsPerPageNumber !== -1) {
-        const offset = (pageNumber - 1) * itemsPerPageNumber;
-        query += ` LIMIT ? OFFSET ?`;
-        queryParams.push(itemsPerPageNumber, offset);
-    }
-
-    baza.query(query, queryParams, (err, results) => {
+    const check = "SELECT id_przedmiotu FROM przedmiot WHERE przedmiot.id_wlasciciela = ?";
+    baza.query(check, [employeeNumber], (err, results) => {
         if (err) {
-            console.error('Błąd podczas pobierania danych:', err);
-            return res.status(500).send('Wewnętrzny błąd serwera');
+            console.error('Błąd zapytania:', err);
+            return res.status(500).send('Błąd serwera');
         }
 
-        const countQuery = `
-            SELECT COUNT(*) AS total 
-            FROM przedmiot 
-            LEFT JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
-            INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
-            ${baseWhere}
-        `;
+        if (results.length == 0 && employeeNumber != -1) {
+            return res.status(404).send('Brak przedmiotów dla podanego właściciela');
+        } else {
+            let query = `
+                SELECT przedmiot.id_przedmiotu, przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, 
+                    przedmiot.firma_przedmiotu, 
+                    CONCAT(wlasciciel.imie_wlasciciela, ' ', wlasciciel.nazwisko_wlasciciela) AS daneW, 
+                    kategorie.nazwa AS rodzaj_przedmiotu
+                FROM przedmiot 
+                INNER JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela 
+                INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
+            `;
 
-        baza.query(countQuery, queryParams.slice(0, queryParams.length - 2), (countErr, countResults) => {
-            if (countErr) {
-                console.error('Błąd podczas pobierania całkowitej liczby rekordów:', countErr);
-                return res.status(500).send('Wewnętrzny błąd serwera');
+            const queryParams = [];
+
+            if (employeeNumber !== -1) {
+                query += ` WHERE przedmiot.id_wlasciciela = ?`;
+                queryParams.push(employeeNumber);
             }
 
-            const totalItems = countResults[0].total;
-            res.json({
-                items: results,
-                total: totalItems,
-                currentPage: pageNumber,
-                totalPages: itemsPerPageNumber !== -1 ? Math.ceil(totalItems / itemsPerPageNumber) : 1,
+            query += ` ORDER BY przedmiot.id_przedmiotu DESC`;
+
+            if (itemsPerPageNumber !== -1) {
+                const offset = (pageNumber - 1) * itemsPerPageNumber;
+                query += ` LIMIT ? OFFSET ?`;
+                queryParams.push(itemsPerPageNumber, offset);
+            }
+
+            baza.query(query, queryParams, (err, results) => {
+                if (err) {
+                    console.error('Błąd podczas pobierania danych:', err);
+                    return res.status(500).send('Wewnętrzny błąd serwera');
+                }
+
+                // Pobranie dla paginacji
+                const countQuery = `
+                    SELECT COUNT(*) AS total FROM przedmiot
+                    ${employeeNumber !== -1 ? 'WHERE przedmiot.id_wlasciciela = ?' : ''}
+                `;
+
+                baza.query(countQuery, employeeNumber !== -1 ? [employeeNumber] : [], (countErr, countResults) => {
+                    if (countErr) {
+                        console.error('Błąd podczas pobierania całkowitej liczby rekordów:', countErr);
+                        return res.status(500).send('Wewnętrzny błąd serwera');
+                    }
+
+                    const totalItems = countResults[0].total;
+                    res.json({
+                        items: results,
+                        total: totalItems,
+                        currentPage: pageNumber,
+                        totalPages: itemsPerPageNumber !== -1 ? Math.ceil(totalItems / itemsPerPageNumber) : 1,
+                    });
+                });
             });
-        });
+        }
     });
 });
 
@@ -497,20 +543,6 @@ app.get('/api/getBarcode', (req, res) => {
     });
 });
 
-app.get('/api/checkBarcode', (req, res) => {
-    const { code } = req.query;
-    const query = "SELECT id_przedmiotu FROM przedmiot WHERE kod_przedmiotu = ?";
-    baza.query(query, code, (err, results) => {
-        if (err) {
-            console.error('Błąd zapytania:', err);
-            return res.status(500).send('Błąd serwera');
-        } else {
-            res.json(results)
-        }
-    });
-});
-
-
 
 app.post('/api/addBarcode', (req, res) => {
     const { id, code } = req.body;
@@ -544,7 +576,7 @@ app.get('/api/getBarcodes', (req, res) => {
 });
 
 app.post('/api/getBarcodeId', (req, res) => {
-    const { code } = req.body;
+    const { code } = req.body; 
 
 
     const query = "SELECT id_przedmiotu FROM przedmiot WHERE kod_przedmiotu = ?";
@@ -553,7 +585,7 @@ app.post('/api/getBarcodeId', (req, res) => {
             console.error('Błąd zapytania:', err);
             return res.status(500).send('Błąd serwera');
         } else {
-            res.json(results);
+            res.json(results); 
         }
     });
 });

@@ -1,0 +1,437 @@
+openapi: 3.0.0
+info:
+  title: Test1 API
+  version: 1.0.0
+  description: CRUD API for `kategorie`, `przedmiot`, and `wlasciciel` tables
+
+servers:
+  - url: http://localhost:3000
+
+components:
+  schemas:
+    kategoria:
+      type: object
+      properties:
+        id:
+          type: integer
+        nazwa:
+          type: string
+
+    przedmiot:
+      type: object
+      properties:
+        id_przedmiotu:
+          type: integer
+        id_wlasciciela:
+          type: integer
+        id_kategorii:
+          type: integer
+        nazwa_przedmiotu:
+          type: string
+        opis_przedmiotu:
+          type: string
+        firma_przedmiotu:
+          type: string
+        kod_przedmiotu:
+          type: string
+
+    wlasciciel:
+      type: object
+      properties:
+        id_wlasciciela:
+          type: integer
+        imie_wlasciciela:
+          type: string
+        nazwisko_wlasciciela:
+          type: string
+
+paths:
+  /api/getEquipment:
+    get:
+      summary: Przedmioty
+      responses:
+        '200':
+          description: Lista przedmiotów
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/przedmiot'
+
+
+  /api/removeItem:
+    post:
+      summary: Delete an item by ID (using POST)
+      description: Deletes a specific item by its ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The ID of the item to delete
+              required:
+                - id
+      responses:
+        '204':
+          description: Successfully deleted the item
+        '404':
+          description: Item not found
+        '500':
+          description: Internal server error
+
+  /api/getwarehousFormData:
+    get:
+      summary: Dane konkretnego przedmiotu
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista możliwych właścicieli, kategorii i dane przedmiotu
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /api/updateItem:
+    post:
+      summary: Update an item by ID
+      description: Updates the details of an item by providing its ID and the new fields to be updated.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Id zmienianego przedmiowu
+                nazwa_przedmiotu:
+                  type: string
+                  description: Nowa nazwa przedmiotu
+                opis:
+                  type: string
+                  description: Nowy opis przedmiotu
+                firma_przedmiotu:
+                  type: string
+                  description: Nowa firma przedmiotu
+                pracownik:
+                  type: string
+                  description: Imię i nazwisko nowego pracownika
+                wybrana_kategoria:
+                  type: string
+                  description: Nazwa nowej kategorii
+              required:
+                - id
+                - nazwa_przedmiotu
+                - opis
+                - firma_przedmiotu
+                - pracownik
+                - wybrana_kategoria
+      responses:
+        '200':
+          description: Successfully updated the item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item updated successfully."
+        '400':
+          description: Bad request. Missing or invalid data.
+        '404':
+          description: Item not found with the provided ID.
+        '500':
+          description: Internal server error.
+
+  /api/addItem:
+    post:
+      summary: Add a new item to the database
+      description: Adds a new item with provided details to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Id zmienianego przedmiowu
+                nazwa_przedmiotu:
+                  type: string
+                  description: Nowa nazwa przedmiotu
+                opis:
+                  type: string
+                  description: Nowy opis przedmiotu
+                firma_przedmiotu:
+                  type: string
+                  description: Nowa firma przedmiotu
+                pracownik:
+                  type: string
+                  description: Imię i nazwisko nowego pracownika
+                wybrana_kategoria:
+                  type: string
+                  description: Nazwa nowej kategorii
+              required:
+                - id
+                - nazwa_przedmiotu
+                - opis
+                - firma_przedmiotu
+                - pracownik
+                - wybrana_kategoria
+      responses:
+        '201':
+          description: Successfully created the new item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    description: The ID of the newly created item
+                  message:
+                    type: string
+                    example: "Item created successfully."
+        '400':
+          description: Bad request (e.g., missing required fields).
+        '500':
+          description: Internal server error.
+
+  /api/getStatistics:
+    get:
+      summary: Statysyki przypisania przedmiotów
+      responses:
+        '200':
+          description: "Lista: zarejestrowanego sprzętu, przypisanych sprzętów i wpisanych pracowników"
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /api/getCategories:
+    get:
+      summary: Kategorie
+      responses:
+        '200':
+          description: "Dane kategorii: id, nazwa"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/kategoria'
+
+  /api/addCategory:
+    post:
+      summary: Add a new item to the database
+      description: Adds a new item with provided details to the database.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nazwa_kategorii:
+                  type: string
+                  description: Nowa nazwa kategorii
+              required:
+                - nazwa_kategorii
+      responses:
+        '201':
+          description: Successfully created the new item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item created successfully."
+        '400':
+          description: Bad request (e.g., missing required fields).
+        '500':
+          description: Internal server error.
+
+  /api/dropCategory:
+    post:
+      summary: Drop a category by ID
+      description: Deletes a category from the database by providing its ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The ID of the category to drop
+              required:
+                - id 
+      responses:
+        '204':
+          description: Successfully deleted the category
+        '400':
+          description: Bad request (e.g., missing or invalid ID).
+        '404':
+          description: Category not found with the provided ID.
+        '500':
+          description: Internal server error.
+
+  /api/getEmployeess:
+    get:
+      summary: Pracownicy
+      responses:
+        '200':
+          description: "Dane pracowników: id, nazwa"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/wlasciciel'
+
+  /api/removeEmployee:
+    post:
+      summary: Drop a category by ID
+      description: Deletes a category from the database by providing its ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The ID of the category to drop
+              required:
+                - id 
+      responses:
+        '204':
+          description: Successfully deleted the category
+        '400':
+          description: Bad request (e.g., missing or invalid ID).
+        '404':
+          description: Category not found with the provided ID.
+        '500':
+          description: Internal server error.
+
+  /api/addEmployee:
+    post:
+      summary: Drop a category by ID
+      description: Deletes a category from the database by providing its ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imie:
+                  type: string
+                  description: The ID of the category to drop
+                nazwisko:
+                  type: string
+                  description: The ID of the category to drop
+              required:
+                - imie
+                - nazwisko
+      responses:
+        '204':
+          description: Successfully deleted the category
+        '400':
+          description: Bad request (e.g., missing or invalid ID).
+        '404':
+          description: Category not found with the provided ID.
+        '500':
+          description: Internal server error.
+
+  /api/getBarcode:
+    get:
+      summary: Kod przedmiotu przypisany do sprzętu o konkretnym id w bazie
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "Kod przedmiotu"
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /api/addBarcode:
+    post:
+      summary: Drop a category by ID
+      description: Deletes a category from the database by providing its ID.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: The ID of the category to drop
+                kod:
+                  type: string
+                  description: The ID of the category to drop
+              required:
+                - imie
+                - nazwisko
+      responses:
+        '204':
+          description: Successfully deleted the category
+        '400':
+          description: Bad request (e.g., missing or invalid ID).
+        '404':
+          description: Category not found with the provided ID.
+        '500':
+          description: Internal server error.
+
+  /api/getBarcodes:
+    get:
+      summary: Kody przedmiotów
+      responses:
+        '200':
+          description: "Lista istniejących kodów"
+          content:
+            application/json:
+              schema:
+                type: array
+
+  /api/getBarcodeId:
+    get:
+      summary: Id przedmiotu o konkretnym kodzie (nie działa xD)
+      parameters:
+        - name: kod_przedmiotu
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Id przedmiotu
+          content:
+            application/json:
+              schema:
+                type: array
