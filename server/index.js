@@ -81,9 +81,9 @@ app.get('/items', (req, res) => {
 
 const baza = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'test2'
+    user: 'admin',
+    password: 'A2NgOTkzQzmM8a',
+    database: 'hostSerwis'
 });
 
 baza.connect(err => {
