@@ -40,12 +40,13 @@ export default {
             });
         },
         onColumnFilter: debounce(function () {
+            this.serverItems = [];
             this.loadItems({
                 page: 1,
                 itemsPerPage: this.itemsPerPage,
                 search: this.search
             });
-        }, 300),
+        }, 500),
         async loadItems(options) {
             this.loading = true;
             this.currentPage = options.page;
@@ -62,7 +63,6 @@ export default {
                         ...this.columnFilters 
                     }
                 });
-
                 if (response && response.data) {
                     this.serverItems = response.data.items.map(item => ({
                         id: item.id_przedmiotu,
@@ -85,7 +85,6 @@ export default {
         },
         editItem(item) {
             this.$router.push({ name: "WarehouseForm", params: { id: item.id } });
-            // console.log('Edytuj', item);
         },
         askToRemoveItem(item) {
             this.itemToDelete = item;
@@ -123,7 +122,6 @@ export default {
         this.loadItems({ page: this.currentPage, itemsPerPage: this.itemsPerPage });
     }
 };
-
 </script>
 
 <template>
