@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^1.8.4",
     "core-js": "^3.8.3",
+    "lodash.debounce": "^4.0.8",
     "mdi-svg": "^2.2.43",
     "qrcode.vue": "^3.6.0",
     "swagger-jsdoc": "^6.2.8",
