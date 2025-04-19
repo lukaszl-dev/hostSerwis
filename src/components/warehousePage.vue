@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import debounce from 'lodash.debounce';
 export default {
     data() {
         return {
@@ -21,10 +22,30 @@ export default {
             snackbarMessage: '',
             confirmDialog: false,
             itemToDelete: null,
-            employee: this.$route.params.id || -1
+            employee: this.$route.params.id || -1,
+            columnFilters: {
+                nazwasprzetu: '',
+                owner: '',
+                opis: '',
+                firma: '',
+                rodzaj: ''
+            },
         };
     },
     methods: {
+        handleTableChange(options) {
+            this.loadItems({
+                ...options,
+                search: this.search
+            });
+        },
+        onColumnFilter: debounce(function () {
+            this.loadItems({
+                page: 1,
+                itemsPerPage: this.itemsPerPage,
+                search: this.search
+            });
+        }, 300),
         async loadItems(options) {
             this.loading = true;
             this.currentPage = options.page;
@@ -36,7 +57,9 @@ export default {
                         page: this.currentPage,
                         itemsPerPage: this.itemsPerPage,
                         employee: this.employee,
-                        filter: this.$route.query.filter || null
+                        filter: this.$route.query.filter || null,
+                        search: options.search || this.search,
+                        ...this.columnFilters 
                     }
                 });
 
@@ -56,7 +79,6 @@ export default {
                 this.$router.push({ name: "Warehouse" });
                 this.employee = -1;
                 this.loadItems({ page: 1, itemsPerPage: 10 });
-
             } finally {
                 this.loading = false;
             }
@@ -135,9 +157,10 @@ export default {
             </v-btn>
         </v-responsive>
 
+
         <v-data-table-server v-model:items-per-page="itemsPerPage" :headers="headers" :items="serverItems"
             :items-length="totalItems" :loading="loading" :search="search" item-value="rodzaj"
-            @update:options="loadItems" itemsPerPageText="Elementów na stronę:" itemPerPageAllText="Wszystkie">
+            @update:options="handleTableChange" itemsPerPageText="Elementów na stronę:" itemPerPageAllText="Wszystkie">
             <template v-slot:[`item.actions`]="{ item }">
 
                 <v-btn class="ma-5 text-body-1 edit" @click="editItem(item)">
@@ -151,6 +174,31 @@ export default {
                 <v-btn class="ma-5 text-body-1 drop" @click="askToRemoveItem(item)">
                     <v-icon icon="mdi-delete mr-2" /> Usuń
                 </v-btn>
+            </template>
+            <template v-slot:tfoot>
+                <tr>
+                    <td>
+                        <v-text-field v-model="columnFilters.nazwasprzetu" class="ma-2" density="compact"
+                            placeholder="Szukaj sprzętu..." hide-details @input="onColumnFilter" />
+                    </td>
+                    <td>
+                        <v-text-field v-model="columnFilters.owner" class="ma-2" density="compact"
+                            placeholder="Szukaj użytkownika..." hide-details @input="onColumnFilter" />
+                    </td>
+                    <td>
+                        <v-text-field v-model="columnFilters.opis" class="ma-2" density="compact"
+                            placeholder="Szukaj opisu..." hide-details @input="onColumnFilter" />
+                    </td>
+                    <td>
+                        <v-text-field v-model="columnFilters.firma" class="ma-2" density="compact"
+                            placeholder="Szukaj producenta..." hide-details @input="onColumnFilter" />
+                    </td>
+                    <td>
+                        <v-text-field v-model="columnFilters.rodzaj" class="ma-2" density="compact"
+                            placeholder="Szukaj kategorii..." hide-details @input="onColumnFilter" />
+                    </td>
+                    <td></td> <!-- dla kolumny "Akcje" -->
+                </tr>
             </template>
         </v-data-table-server>
     </div>
@@ -191,5 +239,15 @@ export default {
 .btn-Add:hover {
     color: var(--primary-yellow);
     background-color: var(--primary-blue);
+}
+
+.textField {
+    width: 50%;
+}
+
+@media (max-width: 768px) {
+    .textField {
+        width: 95%;
+    }
 }
 </style>

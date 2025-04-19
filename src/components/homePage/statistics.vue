@@ -1,9 +1,10 @@
+
 <template>
     <section class="d-flex justify-center flex-column flex-md-row align-center ga-14 mt-15">
         <div class="skew"></div>
         <div class="skew2"></div>
         <v-card v-for="item in items" :key="item.id" class="custom-card" tile>
-            <router-link class="routerLink" :to="item.href">
+            <router-link class="routerLink"  :to="item.href">
                 <img loading="lazy" class="img__stats" :src=item.imgSrc :alt=item.imgAlt />
                 <div class="card-content">
                     <p class="count">{{ item.count }}</p>
@@ -54,7 +55,7 @@ export default {
     methods: {
         async fetchData() {
             try {
-                const response = await axios.get('/api/getStatistics');
+                const response = await axios.get('/api/getStatistics'); 
                 const data = response.data;
                 this.items[0].count = data.all
                 this.items[1].count = data.przypisane
@@ -141,7 +142,6 @@ export default {
 
 
 @media (max-width: 1280px) {
-
     .skew,
     .skew2 {
         display: none;
