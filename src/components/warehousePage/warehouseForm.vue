@@ -32,6 +32,10 @@ const { handleSubmit } = useForm({
 
             return 'Wybierz pracownika'
         },
+        status() {
+            if (wybranyStatus.value) return true
+            return 'Określ status'
+        },
         checkbox(value) {
             if (value === '1') return true
 
@@ -45,6 +49,7 @@ const fprzedmiotu = useField('fprzedmiotu');
 const pracownik = useField('pracownik');
 const kategoria = useField('kategoria');
 const checkbox = useField('checkbox');
+const status = useField('status');
 
 
 // Router/Routing [odebranie parametru id z linka i końcowe przekierowanie na stronę]
@@ -54,6 +59,7 @@ const id = route.params.id || -1;
 // v-model [ustawienie wartości domyślnych dla zmiennych ktore oblusguja formularz]
 const zaznaczonyPracownik = ref(null);
 const wybranaKategoria = ref(null);
+const wybranyStatus = ref(null);
 const nazwaPrzedmiotu = ref(null);
 const firmaPrzedmiotu = ref(null);
 const opisPrzedmiotu = ref(null);
@@ -80,6 +86,7 @@ const fetchData = async () => {
                 nazwaPrzedmiotu.value = response.data.nazwa;
                 firmaPrzedmiotu.value = response.data.firma;
                 opisPrzedmiotu.value = response.data.opis;
+                wybranyStatus.value = response.data.status;
             }
         }
     } catch (error) {
@@ -112,6 +119,7 @@ const updateItem = async () => {
             fprzedmiotu: firmaPrzedmiotu.value,
             pracownik: zaznaczonyPracownik.value,
             wybranaKategoria: wybranaKategoria.value,
+            wybranyStatus: wybranyStatus.value,
         });
         if (response.status == 201) {
             snackbarMessage.value = "Zaktualizowano dane!";
@@ -136,6 +144,7 @@ const addItem = async () => {
             fprzedmiotu: firmaPrzedmiotu.value,
             pracownik: zaznaczonyPracownik.value,
             wybranaKategoria: wybranaKategoria.value,
+            wybranyStatus: wybranyStatus.value,
         });
         if (response.status == 201) {
             snackbarMessage.value = "Dodano sprzęt!";
@@ -187,6 +196,9 @@ const submit = handleSubmit(() => {
 
                     <v-select v-model="wybranaKategoria" :items="kategorie" label="Wybierz kategorie"
                         :error-messages="kategoria.errorMessage.value" :menu-props="{ maxHeight: '400' }"></v-select>
+
+                    <v-select v-model="wybranyStatus" :items="['aktywne', 'nieaktywne']" label="Wybierz status"
+                        :error-messages="status.errorMessage.value" :menu-props="{ maxHeight: '400' }"></v-select>
 
                     <v-checkbox v-model="checkbox.value.value" :error-messages="checkbox.errorMessage.value"
                         label="Potwierdzam zgodność danych ze stanem faktycznym" type="checkbox" value="1"></v-checkbox>

@@ -25,7 +25,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.get('/items', (req, res) => {
     res.json(baza);
-  });
+});
 
 
 const tables = ['kategorie', 'przedmiot', 'właściciel'];
@@ -49,16 +49,6 @@ baza.connect(err => {
 });
 
 
-// app.get('/api/getEquipment', (req, res) => {
-//     const query = "SELECT id, rodzaj, model, ilosc FROM sprzet";
-//     baza.query(query, (err, results) => {
-//         if (err) {
-//             console.error('Błąd zapytania:', err);
-//             return res.status(500).send('Błąd serwera');
-//         }
-//         res.json(results);
-//     });
-// });
 app.get('/api/getEquipment', (req, res) => {
     const {
         page = '1',
@@ -107,7 +97,7 @@ app.get('/api/getEquipment', (req, res) => {
     if (employeeNumber !== -1) {
         baseWhere += ' AND przedmiot.id_wlasciciela = ?';
         queryParams.push(employeeNumber);
-    }   
+    }
     if (columnFilters.nazwasprzetu) {
         baseWhere += ' AND przedmiot.nazwa_przedmiotu LIKE ?';
         queryParams.push(`%${columnFilters.nazwasprzetu}%`);
@@ -128,12 +118,12 @@ app.get('/api/getEquipment', (req, res) => {
         baseWhere += ' AND kategorie.nazwa LIKE ?';
         queryParams.push(`%${columnFilters.rodzaj}%`);
     }
-    
+
 
 
     let query = `
         SELECT przedmiot.id_przedmiotu, przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, 
-               przedmiot.firma_przedmiotu, 
+               przedmiot.firma_przedmiotu, przedmiot.status,
                CONCAT(wlasciciel.imie_wlasciciela, ' ', wlasciciel.nazwisko_wlasciciela) AS daneW, 
                kategorie.nazwa AS rodzaj_przedmiotu
         FROM przedmiot 
@@ -164,8 +154,8 @@ app.get('/api/getEquipment', (req, res) => {
         `;
 
         const countParams = itemsPerPageNumber !== -1
-            ? queryParams.slice(0, -2)  // usuwa LIMIT i OFFSET
-            : [...queryParams];         // bez cięcia, jeśli nie paginujemy
+            ? queryParams.slice(0, -2)
+            : [...queryParams];
 
         baza.query(countQuery, countParams, (countErr, countResults) => {
             if (countErr) {
@@ -252,7 +242,7 @@ app.get('/api/getwarehousFormData', (req, res) => {
 
             const getOwnerAndDataQuery = `
                 SELECT CONCAT(wlasciciel.imie_wlasciciela, " ", wlasciciel.nazwisko_wlasciciela) AS daneW, 
-                    przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, przedmiot.firma_przedmiotu, kategorie.nazwa
+                    przedmiot.nazwa_przedmiotu, przedmiot.opis_przedmiotu, przedmiot.firma_przedmiotu, kategorie.nazwa, przedmiot.status
                 FROM przedmiot 
                 INNER JOIN wlasciciel ON przedmiot.id_wlasciciela = wlasciciel.id_wlasciciela INNER JOIN kategorie ON przedmiot.id_kategorii = kategorie.id
                 WHERE przedmiot.id_przedmiotu = ?`;
@@ -281,6 +271,7 @@ app.get('/api/getwarehousFormData', (req, res) => {
                         // console.log(employees)
                         // console.log(data[0].id_kategorii)
                         // console.log(data[0].nazwa)
+                        // console.log(data[0].status)
                         res.json({
                             employees: employees.map(e => e.daneW),
                             kategorie: categories.map(c => c.nazwa),
@@ -288,7 +279,8 @@ app.get('/api/getwarehousFormData', (req, res) => {
                             owner: data.length > 0 ? data[0].daneW : null,
                             nazwa: data[0].nazwa_przedmiotu,
                             opis: data[0].opis_przedmiotu,
-                            firma: data[0].firma_przedmiotu
+                            firma: data[0].firma_przedmiotu,
+                            status: data[0].status == 0 ? 'nieaktywne' : 'aktywne'
                         });
                     });
                 });
@@ -299,8 +291,10 @@ app.get('/api/getwarehousFormData', (req, res) => {
 });
 
 app.post('/api/updateItem', (req, res) => {
-    const { id, nprzedmiotu, opis, fprzedmiotu, pracownik, wybranaKategoria } = req.body;
+    const { id, nprzedmiotu, opis, fprzedmiotu, pracownik, wybranaKategoria, wybranyStatus } = req.body;
     // console.log(wybranaKategoria)
+
+    const status = wybranyStatus === "nieaktywne" ? 0 : 1;
 
     if (isNaN(id) || id < 0) {
         return res.status(500).send("Błąd updatu!");
@@ -333,9 +327,9 @@ app.post('/api/updateItem', (req, res) => {
                         //     id
                         // });
 
-                        const updateQuery = `UPDATE przedmiot SET id_wlasciciela = ?, id_kategorii = ?, nazwa_przedmiotu = ?, opis_przedmiotu = ?, firma_przedmiotu = ? WHERE id_przedmiotu = ?`;
+                        const updateQuery = `UPDATE przedmiot SET id_wlasciciela = ?, id_kategorii = ?, nazwa_przedmiotu = ?, opis_przedmiotu = ?, firma_przedmiotu = ?, status = ? WHERE id_przedmiotu = ?`;
 
-                        baza.query(updateQuery, [idWlasciciela, idKategorii, nprzedmiotu, opis, fprzedmiotu, id], (err) => {
+                        baza.query(updateQuery, [idWlasciciela, idKategorii, nprzedmiotu, opis, fprzedmiotu, status, id], (err) => {
                             if (err) {
                                 console.error('Błąd zapytania UPDATE:', err);
                                 return res.status(500).send('Błąd serwera');
@@ -356,7 +350,9 @@ app.post('/api/updateItem', (req, res) => {
 
 
 app.post('/api/addItem', (req, res) => {
-    const { id, nprzedmiotu, opis, fprzedmiotu, pracownik, wybranaKategoria } = req.body;
+    const { id, nprzedmiotu, opis, fprzedmiotu, pracownik, wybranaKategoria, wybranyStatus } = req.body;
+
+    const status = wybranyStatus === "nieaktywne" ? 0 : 1;
 
     if (isNaN(id) || id != -1) {
         return res.status(500).send("Błąd dodawania!");
@@ -372,9 +368,9 @@ app.post('/api/addItem', (req, res) => {
                 const idWlasciciela = employeeResults[0].id_wlasciciela;
                 const idKategorii = employeeResults[0].kat;
 
-                const insertQuery = `INSERT INTO przedmiot  VALUES(NULL, ?, ?, ?, ?, ?, NULL)`;
+                const insertQuery = `INSERT INTO przedmiot  VALUES(NULL, ?, ?, ?, ?, ?, NULL, ?)`;
 
-                baza.query(insertQuery, [idWlasciciela, idKategorii, nprzedmiotu, opis, fprzedmiotu], (err) => {
+                baza.query(insertQuery, [idWlasciciela, idKategorii, nprzedmiotu, opis, fprzedmiotu, status], (err) => {
                     if (err) {
                         console.error('Błąd zapytania INSERT:', err);
                         return res.status(500).send('Błąd serwera');
@@ -559,7 +555,6 @@ app.post('/api/addBarcode', (req, res) => {
             console.error('Błąd zapytania:', err);
             return res.status(500).json({ error: 'Błąd serwera', details: err });
         } else {
-            console.log('Wyniki zapytania:', results);
             res.status(200).send("Pomyślnie zapisano kod kreskowy!");
         }
     });
@@ -579,7 +574,7 @@ app.get('/api/getBarcodes', (req, res) => {
 });
 
 app.post('/api/getBarcodeId', (req, res) => {
-    const { code } = req.body; 
+    const { code } = req.body;
 
 
     const query = "SELECT id_przedmiotu FROM przedmiot WHERE kod_przedmiotu = ?";
@@ -588,7 +583,7 @@ app.post('/api/getBarcodeId', (req, res) => {
             console.error('Błąd zapytania:', err);
             return res.status(500).send('Błąd serwera');
         } else {
-            res.json(results); 
+            res.json(results);
         }
     });
 });

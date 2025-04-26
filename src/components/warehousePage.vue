@@ -7,11 +7,12 @@ export default {
             itemsPerPage: 10,
             currentPage: 1,
             headers: [
-                { title: 'Sprzęt', align: 'start', sortable: false, key: 'nazwasprzetu' },
-                { title: 'Użytkownik', key: 'owner', align: 'end' },
-                { title: 'Opis urządzenia', key: 'opis', align: 'end' },
-                { title: 'Producent urządzenia', key: 'firma', align: 'end' },
-                { title: 'Kategoria', key: 'rodzaj', align: 'end' },
+                { title: 'Sprzęt', align: 'center', sortable: false, key: 'nazwasprzetu' },
+                { title: 'Użytkownik', key: 'owner', align: 'center' },
+                { title: 'Opis urządzenia', key: 'opis', align: 'center' },
+                { title: 'Producent urządzenia', key: 'firma', align: 'center' },
+                { title: 'Kategoria', key: 'rodzaj', align: 'center' },
+                { title: 'Status', key: 'status', align: 'center', sortable: false },
                 { title: 'Akcje', key: 'actions', align: 'center', sortable: false }
             ],
             search: '',
@@ -71,6 +72,7 @@ export default {
                         firma: item.firma_przedmiotu,
                         rodzaj: item.rodzaj_przedmiotu,
                         opis: item.opis_przedmiotu,
+                        status: item.status === 0 ? 'nieaktywne' : 'aktywne',
                     }));
                     this.totalItems = response.data.total;
                 }
@@ -195,7 +197,7 @@ export default {
                         <v-text-field v-model="columnFilters.rodzaj" class="ma-2" density="compact"
                             placeholder="Szukaj kategorii..." hide-details @input="onColumnFilter" />
                     </td>
-                    <td></td> <!-- dla kolumny "Akcje" -->
+                    <td></td>
                 </tr>
             </template>
         </v-data-table-server>
